@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: title-aggregator
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn app:app
