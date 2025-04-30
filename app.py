@@ -10,8 +10,13 @@ def scrape_the_verge():
     soup = BeautifulSoup(response.content, 'html.parser')
 
     articles = []
-    # Update the class name if necessary, ensure the correct class for article titles
-    for item in soup.find_all('h2', class_='c-entry-box--compact__title'):
+    # Check if the page is retrieved correctly
+    if response.status_code != 200:
+        print("Failed to retrieve the page. Status code:", response.status_code)
+        return articles
+    
+    # Try using a more general selector, or inspect the correct one
+    for item in soup.find_all('h2'):
         link_tag = item.find('a')
         if link_tag:
             title = link_tag.get_text(strip=True)
@@ -21,15 +26,19 @@ def scrape_the_verge():
                 link = 'https://www.theverge.com' + link
             articles.append({'title': title, 'link': link})
 
-    # Reverse the articles if you want the most recent first
-    articles.reverse() 
+    # If no articles are found, print a message
+    if not articles:
+        print("No articles found with the current scraping logic.")
+    
+    articles.reverse()  # Optionally reverse the order
     return articles
 
 @app.route('/')
 def index():
     articles = scrape_the_verge()
+    # Print articles to check if any were scraped
+    print(articles)
     return render_template('index.html', articles=articles)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
