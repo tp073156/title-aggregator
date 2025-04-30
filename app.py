@@ -10,15 +10,18 @@ def scrape_the_verge():
     soup = BeautifulSoup(response.content, 'html.parser')
 
     articles = []
-    for item in soup.find_all('h2', class_='font-polysans'):
+    # Update the class name if necessary, ensure the correct class for article titles
+    for item in soup.find_all('h2', class_='c-entry-box--compact__title'):
         link_tag = item.find('a')
         if link_tag:
             title = link_tag.get_text(strip=True)
             link = link_tag['href']
+            # Ensure relative links are properly formatted
             if link.startswith('/'):
                 link = 'https://www.theverge.com' + link
             articles.append({'title': title, 'link': link})
 
+    # Reverse the articles if you want the most recent first
     articles.reverse() 
     return articles
 
@@ -29,3 +32,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
